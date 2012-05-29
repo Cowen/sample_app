@@ -13,8 +13,8 @@ require 'spec_helper'
 
 describe User do
 	before do
-		  @user = User.new(name: "Example User", email: "user@example.com", 
-												password: "foobar", password_confirmation: "foobar")
+		@user = User.new(name: "Example User", email: "user@example.com", 
+										 password: "foobar", password_confirmation: "foobar")
 	end
 
 	subject { @user }
@@ -26,8 +26,17 @@ describe User do
 	it { should respond_to(:password_confirmation) }
 	it { should respond_to(:authenticate) }
 	it { should respond_to(:remember_token) }
+	it { should respond_to(:admin) }
+	it { should respond_to(:authenticate) }
 
 	it { should be_valid }
+	it { should_not be_admin }
+
+	describe "with admin attribute set to 'true'" do
+		before { @user.toggle!(:admin) }
+
+		it { should be_admin }
+	end
 
 	describe "remember token" do
 		before { @user.save }
@@ -53,10 +62,10 @@ describe User do
 		it "should be invalid" do
 			addresses = %w[user@foo,com user_at_foo.org example.user@foo.
 										 foo@bar_baz.com foo@bar+baz.com]
-			 addresses.each do |invalid_address|
-				 @user.email = invalid_address
-				 @user.should_not be_valid
-			 end      
+										 addresses.each do |invalid_address|
+											 @user.email = invalid_address
+											 @user.should_not be_valid
+										 end      
 		end
 	end
 
@@ -91,8 +100,8 @@ describe User do
 	end
 
 	describe "when password confirmation is nil" do
-		  before { @user.password_confirmation = nil }
-			  it { should_not be_valid }
+		before { @user.password_confirmation = nil }
+		it { should_not be_valid }
 	end
 
 	describe "return value of authenticate method" do
